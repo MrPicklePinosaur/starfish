@@ -11,3 +11,10 @@ repository = "https://github.com/shellrs/starfish"
 
 [dependencies]
 shrs = { git = "https://github.com/MrPicklePinosaur/shrs" }
+shrs_cd_stack = { git = "https://github.com/MrPicklePinosaur/shrs" }
+shrs_cd_tools = { git = "https://github.com/MrPicklePinosaur/shrs" }
+shrs_command_timer = { git = "https://github.com/MrPicklePinosaur/shrs" }
+shrs_rhai = { git = "https://github.com/MrPicklePinosaur/shrs" }
+shrs_rhai_completion = { git = "https://github.com/MrPicklePinosaur/shrs" }
+
+dirs = { version = "5" }
