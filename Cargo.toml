@@ -1,0 +1,13 @@
+[package]
+name = "starfish"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Daniel Liu <mr.picklepinosaur@gmail.com>"]
+description = "the Super Tasty Aesthetic Rusty Friendly Interactive SHell"
+repository = "https://github.com/shellrs/starfish"
+
+[features]
+
+[dependencies]
+shrs = { git = "https://github.com/MrPicklePinosaur/shrs" }
