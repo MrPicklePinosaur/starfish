@@ -47,3 +47,5 @@ impl ColorTheme {
 }
 
 
+// TODO builtin for switching the colorscheme
+

@@ -11,6 +11,7 @@ use std::{
 };
 
 use config::Config;
+use log::{LevelFilter, warn};
 use prompt::SimplePrompt;
 use shrs::crossterm::{Attribute, Color};
 use shrs::{
@@ -23,23 +24,29 @@ use shrs_cd_tools::git;
 use shrs_command_timer::{CommandTimerPlugin, CommandTimerState};
 use shrs_rhai::RhaiPlugin;
 use shrs_rhai_completion::CompletionsPlugin;
+use simplelog::{TermLogger, TerminalMode, ColorChoice, CombinedLogger};
 
 fn main() {
 
-    let _out = BufWriter::new(stdout());
+    // Setup logger
+    let logger_config = simplelog::ConfigBuilder::new()
+        .set_time_format(String::new())
+        .build();
+    CombinedLogger::init(vec![
+        TermLogger::new(LevelFilter::Warn, logger_config, TerminalMode::Mixed, ColorChoice::Auto)
+    ]).expect("failed to start logger");
 
-    // =-=-= Configuration directory =-=-=
     // Initialize the directory we will be using to hold our configuration and metadata files
-    let config_dir = dirs::home_dir().unwrap().as_path().join(".config/starfish");
+    // TODO modify this using env var
+    let config_dir = dirs::home_dir().expect("Unable to get user home directory").as_path().join(".config/starfish");
     // also log when creating dir
     // TODO ignore errors for now (we dont care if dir already exists)
-    fs::create_dir_all(config_dir.clone());
+    let _ = fs::create_dir_all(config_dir.clone());
 
-    // =-=-= Environment variables =-=-=
     // Load environment variables from calling shell
     let mut env = Env::default();
-    env.load();
-    env.set("SHELL_NAME", "starfish");
+    let _ = env.load();
+    let _ = env.set("SHELL_NAME", "starfish");
 
     let builtins = Builtins::default();
 
@@ -68,7 +75,7 @@ fn main() {
     // Add basic keybindings
     let keybinding = keybindings! {
         |state|
-        "C-l" => ("Clear the screen", { Command::new("clear").spawn()}),
+        "C-l" => ("Clear the screen", { let _ = Command::new("clear").spawn(); }),
         "C-p" => ("Move up one in the command history", {
             if let Some(cd_state) = state.ctx.state.get_mut::<CdStackState>() {
                 if let Some(new_path) = cd_state.down() {
@@ -113,8 +120,6 @@ fn main() {
     let mut hooks = Hooks::new();
     hooks.insert(startup_msg);
 
-    let config = Config::read("example.toml").unwrap();
-
     // =-=-= Shell =-=-=
     // Construct the final shell
     let mut myshell = ShellBuilder::default()
@@ -132,7 +137,14 @@ fn main() {
         .build()
         .expect("Could not construct shell");
 
-    config.apply(&mut myshell).unwrap();
+    // Read and apply config file
+    let config_file = "example.toml";
+    if let Ok(config) = Config::read(config_file) {
+        config.apply(&mut myshell).unwrap();
+    } else {
+        // TODO prompt if user would like to create the default config file automatically
+        warn!("Unable to read config file {}", config_file);
+    }
 
     myshell.run().unwrap();
 }

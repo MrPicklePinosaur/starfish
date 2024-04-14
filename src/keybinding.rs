@@ -11,5 +11,6 @@ pub enum KeybindingFn {
 }
 
 fn clear_screen() {
-    Command::new("clear").spawn();
+    let _ = Command::new("clear").spawn();
 }
+
