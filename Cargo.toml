@@ -21,6 +21,7 @@ dirs = { version = "5" }
 
 serde = { version = "1" }
 toml = { version = "0.8" }
+crossterm = "0.26"
 
 thiserror = "1"
 anyhow = "1"

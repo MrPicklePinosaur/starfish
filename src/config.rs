@@ -4,32 +4,43 @@ use std::collections::HashMap;
 
 use serde::Deserialize;
 use shrs::prelude::*;
-
-#[derive(Debug, Deserialize)]
-enum Theme {
-    Light,
-    Dark,
-}
+use crate::theme::ColorTheme;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub theme: Option<Theme>,
-    pub environment: Option<HashMap<String, String>>
+    pub theme: Option<ColorTheme>,
+    pub environment: Option<HashMap<String, String>>,
+    pub alias: Option<HashMap<String, String>>,
+    pub keybinding: Option<HashMap<String, String>>,
 }
 
 impl Config {
-    pub fn apply(shell: &mut ShellConfig, config_file: &str) -> anyhow::Result<()> {
-        let config: Config = toml::from_str(config_file)?;
+    pub fn read(config_file: &str) -> anyhow::Result<Self> {
+        let config_contents = std::fs::read_to_string(config_file)?;
+        let config: Config = toml::from_str(&config_contents)?;
+        Ok(config)
+    }
 
-        if let Some(theme) = config.theme {
+    pub fn apply(self, shell: &mut ShellConfig) -> anyhow::Result<()> {
 
+        if let Some(theme) = self.theme {
+            shell.theme = theme.to_theme();
         }
 
-        if let Some(environment) = config.environment {
+        if let Some(environment) = self.environment {
             for (k, v) in environment.iter() {
                 // TODO maybe print warning message
                 let _ = shell.env.set(k, v);
             }  
+        }
+
+        if let Some(alias) = self.alias {
+            for (k, v) in alias.iter() {
+                let _ = shell.alias.set(k, AliasInfo::always(v));
+            }  
+        }
+
+        if let Some(keybinding) = self.keybinding {
         }
 
         Ok(())

@@ -1,6 +1,7 @@
 mod keybinding;
 mod prompt;
 mod config;
+mod theme;
 
 use std::{
     fs,
@@ -29,7 +30,7 @@ fn main() {
 
     // =-=-= Configuration directory =-=-=
     // Initialize the directory we will be using to hold our configuration and metadata files
-    let config_dir = dirs::home_dir().unwrap().as_path().join(".config/shrs");
+    let config_dir = dirs::home_dir().unwrap().as_path().join(".config/starfish");
     // also log when creating dir
     // TODO ignore errors for now (we dont care if dir already exists)
     fs::create_dir_all(config_dir.clone());
@@ -96,17 +97,7 @@ fn main() {
         .build()
         .expect("Could not construct readline");
 
-    // =-=-= Aliases =-=-=
-    // Set aliases
-    let alias = Alias::from_iter([
-        ("ls", "ls --color=auto"),
-        ("l", "ls --color=auto"),
-        ("c", "cd"),
-        ("g", "git"),
-        ("v", "vim"),
-        ("V", "nvim"),
-        ("la", "ls -a --color=auto"),
-    ]);
+    let alias = Alias::new();
 
     // =-=-= Hooks =-=-=
     // Create a hook that prints a welcome message on startup
@@ -115,14 +106,14 @@ fn main() {
                                            _sh_rt: &mut Runtime,
                                            _ctx: &StartupCtx|
      -> anyhow::Result<()> {
-        let welcome_str = format!(r#"welcome to ✰ fish"#);
+        let welcome_str = format!(r#"welcome to ✰ starfish✰ - the Super Tasty Aesthetic Rusty Friendly Interactive SHell"#);
         println!("{welcome_str}");
         Ok(())
     };
     let mut hooks = Hooks::new();
     hooks.insert(startup_msg);
 
-    let config_file = std::fs::read_to_string("example.toml").unwrap();
+    let config = Config::read("example.toml").unwrap();
 
     // =-=-= Shell =-=-=
     // Construct the final shell
@@ -141,7 +132,7 @@ fn main() {
         .build()
         .expect("Could not construct shell");
 
-    Config::apply(&mut myshell, &config_file).unwrap();
+    config.apply(&mut myshell).unwrap();
 
     myshell.run().unwrap();
 }

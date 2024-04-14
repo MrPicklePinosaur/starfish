@@ -1,2 +1,11 @@
+theme = "Hacker"
+
 [environment]
 EDITOR = "vim"
+
+[alias]
+l = "ls"
+
+[keybinding]
+
+
