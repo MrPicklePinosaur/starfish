@@ -18,3 +18,9 @@ shrs_rhai = { git = "https://github.com/MrPicklePinosaur/shrs" }
 shrs_rhai_completion = { git = "https://github.com/MrPicklePinosaur/shrs" }
 
 dirs = { version = "5" }
+
+serde = { version = "1" }
+toml = { version = "0.8" }
+
+thiserror = "1"
+anyhow = "1"

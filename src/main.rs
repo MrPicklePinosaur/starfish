@@ -1,4 +1,6 @@
 mod keybinding;
+mod prompt;
+mod config;
 
 use std::{
     fs,
@@ -7,6 +9,8 @@ use std::{
     process::Command,
 };
 
+use config::Config;
+use prompt::SimplePrompt;
 use shrs::crossterm::{Attribute, Color};
 use shrs::{
     history::FileBackedHistory,
@@ -18,49 +22,6 @@ use shrs_cd_tools::git;
 use shrs_command_timer::{CommandTimerPlugin, CommandTimerState};
 use shrs_rhai::RhaiPlugin;
 use shrs_rhai_completion::CompletionsPlugin;
-
-// =-=-= Prompt customization =-=-=
-// Create a new struct and implement the [Prompt] trait
-struct MyPrompt;
-
-impl Prompt for MyPrompt {
-    fn prompt_left(&self, state: &LineStateBundle) -> StyledBuf {
-        let indicator = match state.line.mode() {
-            LineMode::Insert => String::from(">").cyan(),
-            LineMode::Normal => String::from(":").yellow(),
-        };
-        if !state.line.lines.is_empty() {
-            return styled_buf! {" ", indicator, " "};
-        }
-
-        styled_buf!(
-            " ",
-            username().map(|u| u.blue()),
-            " ",
-            top_pwd().white().bold(),
-            " ",
-            indicator,
-            " "
-        )
-    }
-    fn prompt_right(&self, line_ctx: &LineStateBundle) -> StyledBuf {
-        let time_str = line_ctx
-            .ctx
-            .state
-            .get::<CommandTimerState>()
-            .and_then(|x| x.command_time())
-            .map(|x| format!("{x:?}"));
-
-        if !line_ctx.line.lines.is_empty() {
-            return styled_buf!("");
-        }
-        if let Ok(git_branch) = git::branch().map(|s| format!("git:{s}").blue().bold()) {
-            styled_buf!(git_branch, " ", time_str, " ")
-        } else {
-            styled_buf!(time_str, " ")
-        }
-    }
-}
 
 fn main() {
 
@@ -77,7 +38,7 @@ fn main() {
     // Load environment variables from calling shell
     let mut env = Env::default();
     env.load();
-    env.set("SHELL_NAME", "shrs_example");
+    env.set("SHELL_NAME", "starfish");
 
     let builtins = Builtins::default();
 
@@ -124,7 +85,7 @@ fn main() {
     };
 
     // =-=-= Prompt =-=-=
-    let prompt = MyPrompt;
+    let prompt = SimplePrompt;
 
     // =-=-= Readline =-=-=
     // Initialize readline with all of our components
@@ -161,10 +122,11 @@ fn main() {
     let mut hooks = Hooks::new();
     hooks.insert(startup_msg);
 
+    let config_file = std::fs::read_to_string("example.toml").unwrap();
 
     // =-=-= Shell =-=-=
     // Construct the final shell
-    let myshell = ShellBuilder::default()
+    let mut myshell = ShellBuilder::default()
         .with_completer(completer)
         .with_hooks(hooks)
         .with_env(env)
@@ -178,6 +140,8 @@ fn main() {
         .with_plugin(CompletionsPlugin)
         .build()
         .expect("Could not construct shell");
+
+    Config::apply(&mut myshell, &config_file).unwrap();
 
     myshell.run().unwrap();
 }
