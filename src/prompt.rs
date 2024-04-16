@@ -46,6 +46,7 @@ impl Prompt for SimplePrompt {
     }
 }
 
+// A prompt that shows only the bare minimum details
 pub struct MinimalPrompt;
 
 impl Prompt for MinimalPrompt {
@@ -58,4 +59,17 @@ impl Prompt for MinimalPrompt {
     }
 }
 
+
+// Powerline inspired prompt
+pub struct PowerlinePrompt;
+
+impl Prompt for PowerlinePrompt {
+    fn prompt_left(&self, line_ctx: &LineStateBundle) -> StyledBuf {
+        todo!()
+    }
+
+    fn prompt_right(&self, line_ctx: &LineStateBundle) -> StyledBuf {
+        todo!()
+    }
+}
 

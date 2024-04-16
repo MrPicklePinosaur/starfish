@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use shrs::prelude::*;
 use crate::theme::ColorTheme;
+use crate::startup::Startup;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
@@ -12,6 +13,7 @@ pub struct Config {
     pub environment: Option<HashMap<String, String>>,
     pub alias: Option<HashMap<String, String>>,
     pub keybinding: Option<HashMap<String, String>>,
+    pub startup: Option<Startup>,
 }
 
 impl Config {

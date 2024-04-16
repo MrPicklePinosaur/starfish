@@ -2,6 +2,8 @@ mod keybinding;
 mod prompt;
 mod config;
 mod theme;
+mod startup;
+mod gacha;
 
 use std::{
     fs,
@@ -113,7 +115,16 @@ fn main() {
                                            _sh_rt: &mut Runtime,
                                            _ctx: &StartupCtx|
      -> anyhow::Result<()> {
-        let welcome_str = format!(r#"welcome to ✰ starfish✰ - the Super Tasty Aesthetic Rusty Friendly Interactive SHell"#);
+        let welcome_str = format!(r#"
+      /\
+   __/  \__    _______ _______ _______  ______ _______ _____ _______ _     _
+  `.      .'   |______    |    |_____| |_____/ |______   |   |______ |_____|
+    )    (     ______|    |    |     | |    \_ |       __|__ ______| |     |
+   /__(\__\       Super Tasty Aesthetic Rusty Friendly Interactive SHell
+
+
+                                          
+        "#);
         println!("{welcome_str}");
         Ok(())
     };

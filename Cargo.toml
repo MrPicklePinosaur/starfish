@@ -23,8 +23,9 @@ serde = { version = "1" }
 toml = { version = "0.8" }
 crossterm = "0.26"
 
-thiserror = "1"
-anyhow = "1"
-
 log = "0.4"
 simplelog = { version = "^0.11.0", features = ["paris"] }
+
+thiserror = "1"
+anyhow = "1"
+lazy_static = "1.4"

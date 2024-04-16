@@ -1787,6 +1787,7 @@ dependencies = [
  "anyhow",
  "crossterm",
  "dirs",
+ "lazy_static",
  "log",
  "serde",
  "shrs",
