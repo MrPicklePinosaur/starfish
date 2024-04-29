@@ -4,8 +4,8 @@ use std::collections::HashMap;
 
 use serde::Deserialize;
 use shrs::prelude::*;
-use crate::theme::ColorTheme;
-use crate::startup::Startup;
+
+use crate::{startup::Startup, theme::ColorTheme};
 
 #[derive(Debug, Deserialize)]
 pub struct ConfigFile {
@@ -36,7 +36,6 @@ impl ConfigFile {
     }
 
     pub fn apply(self, shell: &mut ShellConfig) -> anyhow::Result<()> {
-
         if let Some(theme) = self.theme {
             shell.theme = theme.to_theme();
         }
@@ -45,17 +44,16 @@ impl ConfigFile {
             for (k, v) in environment.iter() {
                 // TODO maybe print warning message
                 let _ = shell.env.set(k, v);
-            }  
+            }
         }
 
         if let Some(alias) = self.alias {
             for (k, v) in alias.iter() {
                 let _ = shell.alias.set(k, AliasInfo::always(v));
-            }  
+            }
         }
 
-        if let Some(keybinding) = self.keybinding {
-        }
+        if let Some(keybinding) = self.keybinding {}
 
         if let Some(startup) = self.startup {
             shell.hooks.insert(startup.hook_fn());
@@ -65,11 +63,11 @@ impl ConfigFile {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use super::ConfigFile;
     use shrs::prelude::*;
+
+    use super::ConfigFile;
 
     #[test]
     fn test_parse() -> anyhow::Result<()> {

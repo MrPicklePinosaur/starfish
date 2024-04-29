@@ -1,9 +1,9 @@
+mod config;
+mod gacha;
 mod keybinding;
 mod prompt;
-mod config;
-mod theme;
 mod startup;
-mod gacha;
+mod theme;
 
 use std::{
     fs,
@@ -13,10 +13,10 @@ use std::{
 };
 
 use config::ConfigFile;
-use log::{LevelFilter, warn};
+use log::{warn, LevelFilter};
 use prompt::SimplePrompt;
-use shrs::crossterm::{Attribute, Color};
 use shrs::{
+    crossterm::{Attribute, Color},
     history::FileBackedHistory,
     keybindings,
     prelude::{cursor_buffer::CursorBuffer, styled_buf::StyledBuf, *},
@@ -26,21 +26,27 @@ use shrs_cd_tools::git;
 use shrs_command_timer::{CommandTimerPlugin, CommandTimerState};
 use shrs_rhai::RhaiPlugin;
 use shrs_rhai_completion::CompletionsPlugin;
-use simplelog::{TermLogger, TerminalMode, ColorChoice, CombinedLogger};
+use simplelog::{ColorChoice, CombinedLogger, TermLogger, TerminalMode};
 
 fn main() {
-
     // Setup logger
     let logger_config = simplelog::ConfigBuilder::new()
         .set_time_format(String::new())
         .build();
-    CombinedLogger::init(vec![
-        TermLogger::new(LevelFilter::Warn, logger_config, TerminalMode::Mixed, ColorChoice::Auto)
-    ]).expect("failed to start logger");
+    CombinedLogger::init(vec![TermLogger::new(
+        LevelFilter::Warn,
+        logger_config,
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )])
+    .expect("failed to start logger");
 
     // Initialize the directory we will be using to hold our configuration and metadata files
     // TODO modify this using env var
-    let config_dir = dirs::home_dir().expect("Unable to get user home directory").as_path().join(".config/starfish");
+    let config_dir = dirs::home_dir()
+        .expect("Unable to get user home directory")
+        .as_path()
+        .join(".config/starfish");
     // also log when creating dir
     // TODO ignore errors for now (we dont care if dir already exists)
     let _ = fs::create_dir_all(config_dir.clone());

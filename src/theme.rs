@@ -1,8 +1,7 @@
-
 // TODO maybe move this out to a shrs_themes crate later
 
-use serde::Deserialize;
 use crossterm::style::{ContentStyle, Stylize};
+use serde::Deserialize;
 use shrs::theme::Theme;
 
 #[derive(Debug, Deserialize)]
@@ -46,6 +45,4 @@ impl ColorTheme {
     }
 }
 
-
 // TODO builtin for switching the colorscheme
-

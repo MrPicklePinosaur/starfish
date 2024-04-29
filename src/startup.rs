@@ -1,7 +1,10 @@
 //! Collection of startup messages
 
 use serde::Deserialize;
-use shrs::{hooks::{HookFn, StartupCtx}, shell::{Shell, Runtime, Context}};
+use shrs::{
+    hooks::{HookFn, StartupCtx},
+    shell::{Context, Runtime, Shell},
+};
 
 #[derive(Debug, Deserialize)]
 pub enum Startup {
@@ -25,13 +28,18 @@ impl Startup {
             Startup::Fetch => todo!(),
             Startup::Gacha => todo!(),
             Startup::Custom => todo!(),
-        }    
+        }
     }
 }
 
-
-fn default_hook_fn(_sh: &Shell, _sh_ctx: &mut Context, _sh_rt: &mut Runtime, _ctx: &StartupCtx) -> anyhow::Result<()> {
-    let welcome_str = format!(r#"
+fn default_hook_fn(
+    _sh: &Shell,
+    _sh_ctx: &mut Context,
+    _sh_rt: &mut Runtime,
+    _ctx: &StartupCtx,
+) -> anyhow::Result<()> {
+    let welcome_str = format!(
+        r#"
       /\
    __/  \__    _______ _______ _______  ______ _______ _____ _______ _     _
   `.      .'   |______    |    |_____| |_____/ |______   |   |______ |_____|
@@ -40,11 +48,17 @@ fn default_hook_fn(_sh: &Shell, _sh_ctx: &mut Context, _sh_rt: &mut Runtime, _ct
 
 
                                           
-"#);
+"#
+    );
     println!("{welcome_str}");
     Ok(())
 }
 
-fn none_hook_fn(_sh: &Shell, _sh_ctx: &mut Context, _sh_rt: &mut Runtime, _ctx: &StartupCtx) -> anyhow::Result<()> {
+fn none_hook_fn(
+    _sh: &Shell,
+    _sh_ctx: &mut Context,
+    _sh_rt: &mut Runtime,
+    _ctx: &StartupCtx,
+) -> anyhow::Result<()> {
     Ok(())
 }

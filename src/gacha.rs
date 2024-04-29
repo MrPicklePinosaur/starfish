@@ -1,19 +1,17 @@
-
 use std::collections::HashMap;
 
 use lazy_static::lazy_static;
 
 lazy_static! {
-    pub static ref GACHA_TABLE: HashMap<GachaRarity, Vec<GachaItem>> = HashMap::from([
-        (GachaRarity::Common, vec![
-            GachaItem {
-                name: "Xiangling",
-                description: "",
-                element: GachaElement::Fire,
-                art: XIANGLING,
-            }
-        ])
-    ]);
+    pub static ref GACHA_TABLE: HashMap<GachaRarity, Vec<GachaItem>> = HashMap::from([(
+        GachaRarity::Common,
+        vec![GachaItem {
+            name: "Xiangling",
+            description: "",
+            element: GachaElement::Fire,
+            art: XIANGLING,
+        }]
+    )]);
 }
 
 #[derive(Hash, Eq, PartialEq)]

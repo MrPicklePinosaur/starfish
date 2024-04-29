@@ -1,5 +1,4 @@
-
-use shrs::prelude::{*, styled_buf::StyledBuf};
+use shrs::prelude::{styled_buf::StyledBuf, *};
 use shrs_command_timer::CommandTimerState;
 
 pub struct SimplePrompt;
@@ -59,7 +58,6 @@ impl Prompt for MinimalPrompt {
     }
 }
 
-
 // Powerline inspired prompt
 pub struct PowerlinePrompt;
 
@@ -72,4 +70,3 @@ impl Prompt for PowerlinePrompt {
         todo!()
     }
 }
-
