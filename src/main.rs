@@ -12,7 +12,7 @@ use std::{
     process::Command,
 };
 
-use config::Config;
+use config::ConfigFile;
 use log::{LevelFilter, warn};
 use prompt::SimplePrompt;
 use shrs::crossterm::{Attribute, Color};
@@ -108,28 +108,16 @@ fn main() {
 
     let alias = Alias::new();
 
-    // =-=-= Hooks =-=-=
-    // Create a hook that prints a welcome message on startup
-    let startup_msg: HookFn<StartupCtx> = |_sh: &Shell,
-                                           _sh_ctx: &mut Context,
-                                           _sh_rt: &mut Runtime,
-                                           _ctx: &StartupCtx|
-     -> anyhow::Result<()> {
-        let welcome_str = format!(r#"
-      /\
-   __/  \__    _______ _______ _______  ______ _______ _____ _______ _     _
-  `.      .'   |______    |    |_____| |_____/ |______   |   |______ |_____|
-    )    (     ______|    |    |     | |    \_ |       __|__ ______| |     |
-   /__(\__\       Super Tasty Aesthetic Rusty Friendly Interactive SHell
+    // Read and apply config file
+    let config_filename = "example.toml";
 
-
-                                          
-        "#);
-        println!("{welcome_str}");
-        Ok(())
+    let config = if let Ok(config) = ConfigFile::read(config_filename) {
+        config
+    } else {
+        // TODO prompt if user would like to create the default config file automatically
+        warn!("Unable to read config file {}", config_filename);
+        ConfigFile::default()
     };
-    let mut hooks = Hooks::new();
-    hooks.insert(startup_msg);
 
     // =-=-= Shell =-=-=
     // Construct the final shell
@@ -148,14 +136,7 @@ fn main() {
         .build()
         .expect("Could not construct shell");
 
-    // Read and apply config file
-    let config_file = "example.toml";
-    if let Ok(config) = Config::read(config_file) {
-        config.apply(&mut myshell).unwrap();
-    } else {
-        // TODO prompt if user would like to create the default config file automatically
-        warn!("Unable to read config file {}", config_file);
-    }
+    config.apply(&mut myshell).unwrap();
 
     myshell.run().unwrap();
 }

@@ -1,4 +1,5 @@
 theme = "Hacker"
+startup = "Default"
 
 [environment]
 EDITOR = "vim"
@@ -7,5 +8,4 @@ EDITOR = "vim"
 l = "ls"
 
 [keybinding]
-
 

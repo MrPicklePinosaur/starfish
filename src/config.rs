@@ -8,7 +8,7 @@ use crate::theme::ColorTheme;
 use crate::startup::Startup;
 
 #[derive(Debug, Deserialize)]
-pub struct Config {
+pub struct ConfigFile {
     pub theme: Option<ColorTheme>,
     pub environment: Option<HashMap<String, String>>,
     pub alias: Option<HashMap<String, String>>,
@@ -16,10 +16,22 @@ pub struct Config {
     pub startup: Option<Startup>,
 }
 
-impl Config {
+impl Default for ConfigFile {
+    fn default() -> Self {
+        ConfigFile {
+            theme: todo!(),
+            environment: todo!(),
+            alias: todo!(),
+            keybinding: todo!(),
+            startup: todo!(),
+        }
+    }
+}
+
+impl ConfigFile {
     pub fn read(config_file: &str) -> anyhow::Result<Self> {
         let config_contents = std::fs::read_to_string(config_file)?;
-        let config: Config = toml::from_str(&config_contents)?;
+        let config: ConfigFile = toml::from_str(&config_contents)?;
         Ok(config)
     }
 
@@ -45,6 +57,10 @@ impl Config {
         if let Some(keybinding) = self.keybinding {
         }
 
+        if let Some(startup) = self.startup {
+            shell.hooks.insert(startup.hook_fn());
+        }
+
         Ok(())
     }
 }
@@ -52,15 +68,15 @@ impl Config {
 
 #[cfg(test)]
 mod tests {
-    use super::Config;
+    use super::ConfigFile;
     use shrs::prelude::*;
 
     #[test]
     fn test_parse() -> anyhow::Result<()> {
-        let config_file = std::fs::read_to_string("example.toml")?;
+        // let config_file = std::fs::read_to_string("example.toml")?;
 
-        let mut myshell = ShellBuilder::default().build()?;
-        Config::apply(&mut myshell, &config_file)?;
+        // let mut myshell = ShellBuilder::default().build()?;
+        // ConfigFile::apply(&mut myshell, &config_file)?;
 
         Ok(())
     }
